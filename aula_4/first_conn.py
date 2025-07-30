@@ -6,7 +6,7 @@ def connection():
         'host': 'localhost',
         'database': 'postgres',
         'user': 'postgres',
-        'password': 'postgres',  # Era 'pass', agora é 'password'
+        'password': 'postgres', 
         'port': '5432'
     }
     
@@ -18,22 +18,19 @@ def connection():
         print(f"Erro na conexão: {e}")
         return None
 
-def transaction(conn):  # Agora recebe conn como parâmetro
+def transaction(conn): 
     try:
         cur = conn.cursor()
         
-        # Habilitar hstore
         cur.execute("CREATE EXTENSION IF NOT EXISTS hstore;")
         register_hstore(conn)
         
-        # Criar tabela
         cur.execute("""CREATE TABLE IF NOT EXISTS livros (
                         nr serial PRIMARY KEY,
                         titulo varchar,
                         detalhes hstore
                     );""")
         
-        # INSERT com sintaxe correta do hstore
         cur.execute("""INSERT INTO livros (titulo, detalhes) VALUES (%s, %s);""",
                    ('Mastering PostgreSQL 10', {
                        'paginas': '428',
@@ -44,7 +41,6 @@ def transaction(conn):  # Agora recebe conn como parâmetro
                        'peso': '798 g'
                    }))
         
-        # Consultar dados inseridos
         cur.execute("SELECT * FROM livros;")
         resultados = cur.fetchall()
         
